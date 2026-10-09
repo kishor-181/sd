@@ -1,0 +1,22 @@
+{
+  "name": "round2-food-delivery",
+  "version": "1.0.0",
+  "description": "Online Food Delivery Platform REST API - College Practical Assessment",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test-api.js"
+  },
+  "keywords": [
+    "express",
+    "rest-api",
+    "food-delivery",
+    "node"
+  ],
+  "author": "Student",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

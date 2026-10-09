@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Online Food Delivery Platform - Interactive Frontend & REST API Demonstration">
+  <title>QuickBite | Online Food Delivery Platform</title>
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Background Animated Ambient Glows -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- Header Navigation -->
+  <header class="site-header">
+    <div class="container header-content">
+      <div class="brand">
+        <div class="brand-icon">🍕</div>
+        <div class="brand-text">
+          <span class="brand-title">QuickBite</span>
+          <span class="brand-badge">REST API v1.0</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="#restaurants-section" class="nav-link active" data-tab="restaurants">🍽️ Restaurants</a>
+        <a href="#orders-section" class="nav-link" data-tab="orders">📦 My Orders (<span id="orders-count-badge">1</span>)</a>
+        <a href="#api-tester-section" class="nav-link" data-tab="api-tester">⚡ API Sandbox</a>
+      </nav>
+
+      <div class="header-actions">
+        <button id="cart-toggle-btn" class="cart-btn" aria-label="Open Cart">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-text">Cart</span>
+          <span id="cart-badge" class="cart-badge">0</span>
+          <span id="cart-total-header" class="cart-total-header">₹0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Content -->
+  <main class="main-content container">
+
+    <!-- Hero Banner -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <span class="hero-pill">⚡ Powered by Express.js & In-Memory Store</span>
+        <h1 class="hero-title">Delicious Food, <span class="gradient-text">Delivered Fast.</span></h1>
+        <p class="hero-subtitle">
+          Explore curated restaurants, customize your orders in real-time, and track your food status from preparation to your doorstep.
+        </p>
+      </div>
+
+      <div class="search-bar-wrapper">
+        <div class="search-input-group">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="location-search" placeholder="Search by location (e.g. Downtown, Uptown, Suburbs)..." autocomplete="off">
+          <button id="search-btn" class="btn btn-primary">Find Food</button>
+          <button id="reset-filter-btn" class="btn btn-secondary" title="Reset filter">Clear</button>
+        </div>
+        <div class="quick-filters">
+          <span class="filter-label">Quick Locations:</span>
+          <button class="filter-chip active" data-location="">All Locations</button>
+          <button class="filter-chip" data-location="Downtown">Downtown</button>
+          <button class="filter-chip" data-location="Uptown">Uptown</button>
+          <button class="filter-chip" data-location="Suburbs">Suburbs</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESTAURANTS SECTION -->
+    <section id="restaurants-section" class="app-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Available Restaurants</h2>
+          <p class="section-subtitle">Real-time response from <code>GET /api/restaurants</code></p>
+        </div>
+        <div class="stats-badge" id="restaurants-found-count">Loading restaurants...</div>
+      </div>
+
+      <div id="restaurants-grid" class="restaurants-grid">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ORDERS & STATUS TRACKER SECTION -->
+    <section id="orders-section" class="app-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Live Order Tracker & Lifecycle Management</h2>
+          <p class="section-subtitle">Testing Status Transitions (<code>PATCH /api/orders/:id/status</code>) & Cancellation (<code>PATCH /api/orders/:id/cancel</code>)</p>
+        </div>
+        <button id="refresh-orders-btn" class="btn btn-secondary">🔄 Refresh Orders</button>
+      </div>
+
+      <div class="orders-layout">
+        <!-- Orders List Sidebar -->
+        <div class="orders-sidebar">
+          <h3 class="subsection-title">Recent Orders</h3>
+          <div id="orders-list" class="orders-list">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Active Order Detail & Live Stepper -->
+        <div class="order-tracker-panel" id="order-tracker-panel">
+          <div class="empty-state-panel" id="no-order-selected">
+            <span class="empty-icon">📦</span>
+            <h3>Select an Order to Track</h3>
+            <p>Pick an order from the list on the left or place a new order to see live real-time status progression!</p>
+          </div>
+
+          <div id="active-order-detail" class="order-detail-card hidden">
+            <!-- Active order details dynamically loaded -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE REST API SANDBOX -->
+    <section id="api-tester-section" class="app-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">REST API Practical Assessment Sandbox</h2>
+          <p class="section-subtitle">Instantly test standard HTTP Methods & Response Codes directly on the server</p>
+        </div>
+      </div>
+
+      <div class="sandbox-container">
+        <div class="sandbox-actions-grid">
+          <div class="sandbox-card">
+            <span class="badge-code badge-get">GET</span>
+            <h4>1. Search Restaurants</h4>
+            <p><code>GET /api/restaurants</code></p>
+            <button class="btn btn-sm btn-outline" onclick="app.runSandbox('get-restaurants')">Send Request</button>
+          </div>
+
+          <div class="sandbox-card">
+            <span class="badge-code badge-get">GET</span>
+            <h4>2. Filter Restaurants (Downtown)</h4>
+            <p><code>GET /api/restaurants?location=Downtown</code></p>
+            <button class="btn btn-sm btn-outline" onclick="app.runSandbox('filter-restaurants')">Send Request</button>
+          </div>
+
+          <div class="sandbox-card">
+            <span class="badge-code badge-get">GET</span>
+            <h4>3. Get Menu (Valid: 200 OK)</h4>
+            <p><code>GET /api/restaurants/1/menu</code></p>
+            <button class="btn btn-sm btn-outline" onclick="app.runSandbox('get-menu-valid')">Send Request</button>
+          </div>
+
+          <div class="sandbox-card">
+            <span class="badge-code badge-err">404 NOT FOUND</span>
+            <h4>4. Menu 404 (Missing Restaurant)</h4>
+            <p><code>GET /api/restaurants/999/menu</code></p>
+            <button class="btn btn-sm btn-outline" onclick="app.runSandbox('get-menu-404')">Trigger 404</button>
+          </div>
+
+          <div class="sandbox-card">
+            <span class="badge-code badge-post">POST (201)</span>
+            <h4>5. Place Valid Order (201 Created)</h4>
+            <p><code>POST /api/orders</code></p>
+            <button class="btn btn-sm btn-outline" onclick="app.runSandbox('place-order-valid')">Trigger 201</button>
+          </div>
+
+          <div class="sandbox-card">
+            <span class="badge-code badge-err">400 BAD REQUEST</span>
+            <h4>6. Place Invalid Order (400)</h4>
+            <p><code>POST /api/orders</code> (Negative Qty)</p>
+            <button class="btn btn-sm btn-outline" onclick="app.runSandbox('place-order-400')">Trigger 400</button>
+          </div>
+
+          <div class="sandbox-card">
+            <span class="badge-code badge-patch">PATCH (200)</span>
+            <h4>7. Advance Order Status (200 OK)</h4>
+            <p><code>PATCH /api/orders/:id/status</code></p>
+            <button class="btn btn-sm btn-outline" onclick="app.runSandbox('advance-status')">Trigger PATCH</button>
+          </div>
+
+          <div class="sandbox-card">
+            <span class="badge-code badge-conflict">409 CONFLICT</span>
+            <h4>8. Cancel Forbidden Order (409)</h4>
+            <p><code>PATCH /api/orders/:id/cancel</code> (Delivered)</p>
+            <button class="btn btn-sm btn-outline" onclick="app.runSandbox('cancel-409')">Trigger 409</button>
+          </div>
+        </div>
+
+        <!-- Sandbox Output Terminal -->
+        <div class="sandbox-terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <span class="terminal-title" id="sandbox-req-title">HTTP Response Console</span>
+            <span class="status-indicator" id="sandbox-status-tag">Ready</span>
+          </div>
+          <pre id="sandbox-output" class="terminal-body">// Click any sandbox button above to inspect live HTTP status codes & JSON payload responses.</pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MENU MODAL -->
+  <div id="menu-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <div class="modal-tag" id="modal-cuisine-tag">North Indian</div>
+          <h2 class="modal-title" id="modal-restaurant-name">Spice Garden Menu</h2>
+          <p class="modal-location" id="modal-restaurant-location">📍 Downtown • ⭐ 4.5 Rating</p>
+        </div>
+        <button class="close-modal-btn" id="close-menu-modal" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div id="menu-items-list" class="menu-grid">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="modal-cart-summary">
+          <span id="modal-cart-count">0 items selected</span>
+          <span id="modal-cart-total" class="modal-total-price">₹0</span>
+        </div>
+        <button class="btn btn-primary" id="modal-checkout-btn">Proceed to Checkout ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CART & CHECKOUT DRAWER / MODAL -->
+  <div id="cart-drawer" class="drawer-backdrop hidden">
+    <div class="drawer-card">
+      <div class="drawer-header">
+        <h3 class="drawer-title">🛒 Your Food Cart</h3>
+        <button class="close-modal-btn" id="close-cart-btn">&times;</button>
+      </div>
+
+      <div class="drawer-body">
+        <div id="cart-restaurant-info" class="cart-restaurant-banner hidden">
+          Ordering from: <strong id="cart-restaurant-name">Spice Garden</strong>
+        </div>
+
+        <div id="cart-items-container" class="cart-items-list">
+          <div class="empty-cart-msg">Your cart is currently empty. Pick some mouthwatering dishes!</div>
+        </div>
+
+        <div class="checkout-form" id="checkout-form-container">
+          <label for="customer-id-input" class="form-label">Customer ID (Required for <code>POST /api/orders</code>):</label>
+          <input type="text" id="customer-id-input" class="form-input" value="CUST101" placeholder="e.g. CUST101">
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <div class="bill-row">
+          <span>Subtotal</span>
+          <strong id="cart-subtotal">₹0</strong>
+        </div>
+        <div class="bill-row">
+          <span>Delivery Fee</span>
+          <span class="text-green">FREE</span>
+        </div>
+        <div class="bill-row grand-total">
+          <span>Grand Total</span>
+          <strong id="cart-grand-total">₹0</strong>
+        </div>
+
+        <button id="place-order-btn" class="btn btn-primary btn-block btn-lg" disabled>
+          Place Order (POST /api/orders)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANCEL ORDER CONFIRMATION MODAL -->
+  <div id="cancel-modal" class="modal-backdrop hidden">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h3 class="modal-title text-danger">⚠️ Cancel Order</h3>
+        <button class="close-modal-btn" id="close-cancel-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to cancel Order #<strong id="cancel-order-id-label">1001</strong>?</p>
+        <p class="text-muted text-sm">Note: Orders in <code>READY_FOR_PICKUP</code>, <code>OUT_FOR_DELIVERY</code>, or <code>DELIVERED</code> cannot be cancelled.</p>
+        <div class="form-group mt-3">
+          <label for="cancel-reason-input" class="form-label">Cancellation Reason (Optional):</label>
+          <input type="text" id="cancel-reason-input" class="form-input" placeholder="e.g. Changed my mind, wrong address">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-modal-dismiss-btn">Keep Order</button>
+        <button class="btn btn-danger" id="confirm-cancel-api-btn">Yes, Cancel Order</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- JavaScript -->
+  <script src="js/app.js"></script>
+</body>
+</html>
